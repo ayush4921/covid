@@ -31,6 +31,8 @@
         <section class="portfolio-block contact">
             <div class="container">
                 <div class="heading">
+                    <h2 style="color: red;">{{ results }}</h2>
+
                     <h2>Please fill in the details for Covid detection</h2>
                 </div>
                 <form action="/inputform" method="post" enctype=multipart/form-data>
@@ -51,7 +53,7 @@
 
             <!-- Upload image input-->
             <div class="input-group mb-3 px-2 py-2 rounded-pill bg-white shadow-sm">
-                <input id="upload" type="file" name="file1" onchange="readURL(this);" class="form-control border-0">
+                <input id="upload" type="file" name="image" onchange="readURL(this);" class="form-control border-0">
                 <label id="upload-label" for="upload" class="font-weight-light text-muted"></label>
                 <div class="input-group-append">
                     <label for="upload" class="btn btn-light m-0 rounded-pill px-4 float"> <i class="fa fa-cloud-upload mr-2 text-muted"></i><small class="text-uppercase font-weight-bold text-muted">Choose file</small></label>
@@ -76,7 +78,6 @@
             <div class="links"><a href="#">Documentation</a></div>
             <div class="social-icons"><a href="#"><i class="icon ion-social-instagram-outline"></i></a></div>
         </div>
-    <p>{{ results }}</p>
     </footer>
     <script src="../static/js/jquery.min.js"></script>
     <script src="../static/bootstrap/js/bootstrap.min.js"></script>
