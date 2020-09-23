@@ -2,21 +2,10 @@ import os
 from flask import Flask, flash, request, redirect, url_for, render_template
 from werkzeug.utils import secure_filename
 from os.path import join, dirname, realpath
-from google.cloud import automl
+
 import image
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="abc.json"
-# TODO(developer): Uncomment and set the following variables
-project_id = "refreshing-cat-289711"
-model_id = "ICN7554104478681530368"
-
-prediction_client = automl.PredictionServiceClient()
-
-# Get the full path of the model.
-model_full_id = automl.AutoMlClient.model_path(
-    project_id, "us-central1", model_id
-)
-
-prediction_client = automl.PredictionServiceClient()
+from keras.models import model_from_json
+import tensorflow as tf
 
 
 UPLOADS_PATH = join(dirname(realpath(__file__)), 'static\\imgages')
@@ -56,35 +45,36 @@ def input_symptoms():
             return render_template('index.html', results="No File Found")
         file_path = "beach1.bmp"
 
-        with open(file_path, "rb") as content_file:
-            content = content_file.read()
-        image = automl.Image(image_bytes=content)
-        payload = automl.ExamplePayload(image=image)
-
-        # params is additional domain-specific parameters.
-        # score_threshold is used to filter the result
-        # https://cloud.google.com/automl/docs/reference/rpc/google.cloud.automl.v1#predictrequest
-        params = {"score_threshold": "0.8"}
-
-        request2 = automl.PredictRequest(
-            name=model_full_id,
-            payload=payload,
-            params=params
-        )
-        # 'content' is base-64-encoded image data.
-
-        response = prediction_client.predict(request=request2)
-
-        for result in response.payload:
-            var1 = result.display_name
-            var2 = result.classification
-
-
-
-
-        result2='Disease: ',var1,' Probability of disease: ',var2
-        result = 'here, '+travel, tiredcough, breath, exposure+" you go"
-        return render_template('index.html', results=result,result2=result2)
+    def load_model():
+        # load json and create model
+        json_file = open('./model.json', 'r')
+        loaded_model_json = json_file.read()
+        json_file.close()
+        loaded_model = model_from_json(loaded_model_json)
+        # load weights into new model
+        loaded_model.load_weights("./model.h5")
+        # load training history
+        #json_file = open('history.json', 'r')
+        #loaded_history = json_file.read()
+        #json_file.close()
+        print("Loaded model from disk") 
+        return loaded_model, history
+                    
+ # to load pre-saved model
+    (loaded_model, history) = load_model()
+    def predict_pathogen(img, loaded_model):
+        image = cv2.imread(img)
+        image = cv2.resize(image, (128, 128), interpolation=cv2.INTER_CUBIC)
+        image = img_to_array(image)
+        image = np.array(image, dtype="float") / 255.0
+        image = np.expand_dims(image, axis=0)
+        outcome = loaded_model.predict(image)
+        print(outcome)
+        return outcome
+    
+# test
+        pathogen = predict_pathogen("../input/nnnnkln/beach1.bmp", loaded_model)
+        return render_template('index.html', results=result,result2=result2,pathogen=pathogen)
     return None
 
 
