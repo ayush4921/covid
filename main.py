@@ -27,10 +27,6 @@ def allowed_file(filename):
 
 def input_symptoms():
 
-
-
-
-
     if request.method == 'POST':
         travel = str(request.form['travel'])
         tiredcough = str(request.form['commonsym'])
@@ -38,46 +34,53 @@ def input_symptoms():
         exposure = str(request.form['exposure'])
         try:
 
+            # to load pre-saved model
+            loaded_model = load_model()
+
             image = request.files['image']
             
-            image.save('beach1.bmp')
+            image.save('temp_image.bmp')
+
+            pathogen = predict_pathogen("./temp_image.bmp", loaded_model)
+
+            print(pathogen)
+
+            result = ','.join([travel, tiredcough, breath, exposure])
+
+            result2 = 'result 2'
+
+            return render_template('index.html', results=result, result2=result2, pathogen=pathogen)
+
         except:
+
             return render_template('index.html', results="No File Found")
-        file_path = "beach1.bmp"
-
-    def load_model():
-        # load json and create model
-        json_file = open('./model.json', 'r')
-        loaded_model_json = json_file.read()
-        json_file.close()
-        loaded_model = model_from_json(loaded_model_json)
-        # load weights into new model
-        loaded_model.load_weights("./model.h5")
-        # load training history
-        #json_file = open('history.json', 'r')
-        #loaded_history = json_file.read()
-        #json_file.close()
-        print("Loaded model from disk") 
-        return loaded_model
-                    
- # to load pre-saved model
-    (loaded_model, history) = load_model()
-    def predict_pathogen(img, loaded_model):
-        image = cv2.imread(img)
-        image = cv2.resize(image, (128, 128), interpolation=cv2.INTER_CUBIC)
-        image = img_to_array(image)
-        image = np.array(image, dtype="float") / 255.0
-        image = np.expand_dims(image, axis=0)
-        outcome = loaded_model.predict(image)
-        print(outcome)
-        return outcome
-    
-# test
-        pathogen = predict_pathogen("./image.png", loaded_model)
-        return render_template('index.html', results=result,result2=result2,pathogen=pathogen)
-    return None
 
 
+def load_model():
+    # load json and create model
+    json_file = open('./model.json', 'r')
+    loaded_model_json = json_file.read()
+    json_file.close()
+    loaded_model = model_from_json(loaded_model_json)
+    # load weights into new model
+    loaded_model.load_weights("./model.h5")
+    # load training history
+    #json_file = open('history.json', 'r')
+    #loaded_history = json_file.read()
+    #json_file.close()
+    print("Loaded model from disk")
+    return loaded_model
+
+
+def predict_pathogen(img, loaded_model):
+    image = cv2.imread(img)
+    image = cv2.resize(image, (128, 128), interpolation=cv2.INTER_CUBIC)
+    image = img_to_array(image)
+    image = np.array(image, dtype="float") / 255.0
+    image = np.expand_dims(image, axis=0)
+    outcome = loaded_model.predict(image)
+    #print(outcome)
+    return outcome
 
 
 if __name__ == '__main__':
