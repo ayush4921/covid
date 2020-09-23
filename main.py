@@ -58,7 +58,7 @@ def input_symptoms():
         #loaded_history = json_file.read()
         #json_file.close()
         print("Loaded model from disk") 
-        return loaded_model, history
+        return loaded_model
                     
  # to load pre-saved model
     (loaded_model, history) = load_model()
