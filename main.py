@@ -2,7 +2,7 @@ import os
 from flask import Flask, flash, request, redirect, url_for, render_template
 from werkzeug.utils import secure_filename
 from os.path import join, dirname, realpath
-
+import cv2
 import image
 from keras.models import model_from_json
 import tensorflow as tf
