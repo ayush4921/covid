@@ -14,8 +14,25 @@ import numpy as np
 UPLOADS_PATH = join(dirname(realpath(__file__)), 'static\\imgages')
 
 
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'bmp'}
 app = Flask(__name__)
+
+
+
+# Some hard-coded info
+cutoff_val = 0.5
+
+diag_info_dict = {
+    'No Finding': 'No significant result',
+    'Effusion': 'Requires a medical diagnosis, Symptoms include coughing, sharp chest pain or shortness of breath.',
+    'Infiltration': 'A pulmonary infiltrate is a substance denser than air, such as pus, blood, or protein, which lingers within the parenchyma of the lungs. Pulmonary infiltrates are associated with pneumonia, tuberculosis, and nocardiosis',
+    'Atelectasis': 'There may be no obvious symptoms of atelectasis. When symptoms occur, they may include trouble breathing, cough and low-grade fever.',
+    'Edema': 'Depending on the cause, pulmonary oedema symptoms may appear suddenly or develop over time. Mild to extreme breathing difficulty can occur. Cough, chest pain and fatigue are other symptoms.',
+    'Consolidation': 'Lung consolidation occurs when the air that usually fills the small airways in your lungs isreplaced with something else. Depending on the cause, the air may be replaced with: a fluid, such as pus, blood, or water, or a solid, such as stomach contents or cells',
+    'Mass': 'Consider serious medical diagnosis. Lung cancer is a mass or growth in the lung made up of cancer cells, but not all masses in the lung are caused by cancer',
+    'Nodule': 'A lung nodule or pulmonary nodule is a relatively small focal density in the lung. A solitary pulmonary nodule or coin lesion, is a mass in the lung smaller than 3 centimeters in diameter. There may also be multiple nodules. One or more lung nodules can be an incidental finding found in up to 0.2% of chest X-rays and around 1% of CT scans.',
+    'Fibrosis': 'Pulmonary fibrosis is a lung disease that occurs when lung tissue becomes damaged and scarred. Causes of pulmonary fibrosis include environmental pollutants, some medicines, some connective tissue diseases, and interstitial lung disease.'
+}
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -46,15 +63,29 @@ def input_symptoms():
 
             pathogen = predict_pathogen("./temp_image.bmp", loaded_model)
 
-            print(pathogen)
+            current_labels = ['No Finding', 'Effusion', 'Infiltration', 'Atelectasis', 'Edema', 'Consolidation', 'Mass', 'Nodule', 'Fibrosis']
+
+            pathogen = pathogen[0]
+
+            result_dict = dict(zip(current_labels, pathogen))
+
+            filtered_list = []
+
+
+
+            for key, value in result_dict.items():
+                if value > cutoff_val:
+                    if key in diag_info_dict.keys():
+                        filtered_list.append([key, str(value), diag_info_dict[key]])
+                    else:
+                        filtered_list.append([key, str(value), 'No additional info'])
+
 
             result = ','.join([travel, tiredcough, breath, exposure])
 
-            print(result)
-
             result2 = 'result 2'
 
-            return render_template('index.html', results=result, result2=result2, pathogen=pathogen)
+            return render_template('index.html', results=result, result2=result2, pathogen=filtered_list)
 
         except:
 
