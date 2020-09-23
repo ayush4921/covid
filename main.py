@@ -5,7 +5,10 @@ from os.path import join, dirname, realpath
 import cv2
 import image
 from keras.models import model_from_json
+from keras.preprocessing.image import img_to_array
+import cv2
 import tensorflow as tf
+import numpy as np
 
 
 UPLOADS_PATH = join(dirname(realpath(__file__)), 'static\\imgages')
@@ -46,6 +49,8 @@ def input_symptoms():
             print(pathogen)
 
             result = ','.join([travel, tiredcough, breath, exposure])
+
+            print(result)
 
             result2 = 'result 2'
 
