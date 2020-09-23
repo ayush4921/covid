@@ -67,20 +67,23 @@ def input_symptoms():
 
             pathogen = pathogen[0]
 
+            sorted_lists = [x for _, x in sorted(zip(pathogen, current_labels))]
+
             result_dict = dict(zip(current_labels, pathogen))
 
-            print(result_dict)
+            print(sorted_lists)
 
             filtered_list = []
 
+            top_two_results = sorted_lists[-2:]
 
+            print(top_two_results)
 
-            for key, value in result_dict.items():
-                if value > cutoff_val:
-                    if key in diag_info_dict.keys():
-                        filtered_list.append([key, str(value), diag_info_dict[key]])
-                    else:
-                        filtered_list.append([key, str(value), 'No additional info'])
+            for condition in top_two_results:
+                if condition in diag_info_dict.keys():
+                    filtered_list.append([condition, diag_info_dict[condition]])
+                else:
+                    filtered_list.append([condition, 'No additional info'])
 
 
             result = ','.join([travel, tiredcough, breath, exposure])
