@@ -69,6 +69,8 @@ def input_symptoms():
 
             result_dict = dict(zip(current_labels, pathogen))
 
+            print(result_dict)
+
             filtered_list = []
 
 

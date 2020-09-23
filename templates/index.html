@@ -33,7 +33,16 @@
                 <div class="heading">
                     <h2 style="color: red;">{{ results }}</h2>
                     <h2 style="color: red;">{{ result2 }}</h2>
-                    <h2 style="color: red;">{{ pathogen }}</h2>
+
+                    <h3 style="color: red;">
+                        {% for row in pathogen %}
+                        <tr>
+                          {% for item in row %}
+                          <td> {{item}} </td>
+                          {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </h3>
 
                     <h2>Please fill in the details for Covid detection</h2>
                 </div>
