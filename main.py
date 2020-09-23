@@ -73,7 +73,7 @@ def input_symptoms():
         return outcome
     
 # test
-        pathogen = predict_pathogen("../input/nnnnkln/beach1.bmp", loaded_model)
+        pathogen = predict_pathogen("beach1.bmp", loaded_model)
         return render_template('index.html', results=result,result2=result2,pathogen=pathogen)
     return None
 
