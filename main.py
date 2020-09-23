@@ -2,7 +2,7 @@ import os
 from flask import Flask, flash, request, redirect, url_for, render_template
 from werkzeug.utils import secure_filename
 from os.path import join, dirname, realpath
-
+import cv2
 import image
 from keras.models import model_from_json
 import tensorflow as tf
@@ -58,7 +58,7 @@ def input_symptoms():
         #loaded_history = json_file.read()
         #json_file.close()
         print("Loaded model from disk") 
-        return loaded_model, history
+        return loaded_model
                     
  # to load pre-saved model
     (loaded_model, history) = load_model()
@@ -73,7 +73,7 @@ def input_symptoms():
         return outcome
     
 # test
-        pathogen = predict_pathogen("beach1.bmp", loaded_model)
+        pathogen = predict_pathogen("./image.png", loaded_model)
         return render_template('index.html', results=result,result2=result2,pathogen=pathogen)
     return None
 
